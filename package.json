@@ -1,0 +1,19 @@
+{
+  "name": "work_distribution",
+  "version": "1.0.0",
+  "description": "App to assign tasks to agents",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mocha": "^6.2.2",
+    "mysql2": "^2.0.0",
+    "sequelize": "^5.21.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha",
+    "start":"mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
