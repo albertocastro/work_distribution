@@ -1,15 +1,12 @@
-const Agent = require("../models/Agent").Agent
-const Task = require("../models/Agent").Task
-const Skill = require("../models/Agent").Skill
-const sequelize = require("../models/Agent").sequelize
-const promiseSequelize = require("../models/Agent").promiseSequelize
-const Sequelize = require('sequelize')
-
-const Op = Sequelize.Op
-const TASK_PRIORITY = require("../models/Agent").TASK_PRIORITY
+const Agent = require("../models/").Agent
+const Task = require("../models/").Task
+const Skill = require("../models/").Skill
+const sequelize = require("../db")
+const TASK_PRIORITY = require("../models/").TASK_PRIORITY
 
 class WorkManager {
     static async init() {
+        // Sets the initial state of the app by adding two agents
         let agent1 = {
             firstName: "First User",
             skills: ["skill1", "skill2", "skill3"]
@@ -19,11 +16,10 @@ class WorkManager {
             skills: ["skill1", "skill2"]
         }
 
-        sequelize.sync().then(async ()=>{
 
-            await WorkManager.createAgentWithSkill(agent1)
-            await WorkManager.createAgentWithSkill(agent2)
-        })
+        await WorkManager.createAgentWithSkill(agent1)
+        await WorkManager.createAgentWithSkill(agent2)
+   
         
     }
     static async createAgent(agentParams) {
@@ -40,14 +36,19 @@ class WorkManager {
         return res[0]
 
     }
+    static async getAllAgents() {
+        const res = await Agent.findAll({include:[Task]})
+        return res
+
+    }
     static async deleteAgent(where) {
         await Agent.destroy({ where })
 
     }
     static async createAgentWithSkill(agent) {
+        // Function to create an Agent with Skills
 
         // First we need to create all the skills that are not already there
-
         // Existing Skills
         let skillsIds = []
         for (let i = 0; i < agent.skills.length; i++) {
@@ -56,26 +57,29 @@ class WorkManager {
                 raw: true,
                 where: {
                     name: skill
-
                 }
-
             })
             skillsIds.push(dbSkill[0].id)
         }
         delete agent.skills
+
+        // Creating the agent
         let agentFromDb = await Agent.create(agent)
-        agentFromDb.setSkills(skillsIds)
+
+        // Adding skils to them
+        await agentFromDb.setSkills(skillsIds)
 
         let response = agentFromDb.get({ plain: true })
         const skills = await agentFromDb.getSkills({ raw: true })
         response.skills = skills
+        
         return response
 
     }
     static async createTask(task) {
+        // Function to create a Task
 
         // First we need to create all the skills that are not already there
-
         // Existing Skills
         let skillsIds = []
         for (let i = 0; i < task.skills.length; i++) {
@@ -84,14 +88,14 @@ class WorkManager {
                 raw: true,
                 where: {
                     name: skill
-
                 }
-
             })
             skillsIds.push(dbSkill[0].id)
         }
-
+        // Creating a Task
         let taskFromDB = await Task.create(task)
+
+        // Adding Skills
         taskFromDB.setSkills(skillsIds)
 
         let response = taskFromDB.get({ plain: true })
@@ -103,7 +107,7 @@ class WorkManager {
     static async markCompleted(taskId) {
         await Task.update({ completed: 1 }, { where: { id: taskId } })
         let agent = await Agent.update({ taskId: null }, { where: { taskId } })
-        return (agent > 0)
+        return true
     }
     static async assignAgent(taskId) {
         // Getting task 
@@ -175,14 +179,12 @@ class WorkManager {
 
     }
     static async cleanDB() {
-        
-        await sequelize.query("set foreign_key_checks=0")
-
-        await sequelize.query("truncate from AgentSkill;")
-        await sequelize.query("truncate from TaskSkill ")
-        await sequelize.query("truncate from skills ")
-        await sequelize.query("truncate from tasks ")
-        await sequelize.query("truncate from agents")
+        await sequelize.query("SET foreign_key_checks = 0")
+        await sequelize.query("delete from AgentSkill")
+        await sequelize.query("delete from TaskSkill")
+        await sequelize.query("delete from skills")
+        await sequelize.query("delete from tasks")
+        await sequelize.query("delete from agents")
         await sequelize.query("set foreign_key_checks=1")
 
 

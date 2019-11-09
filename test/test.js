@@ -16,87 +16,26 @@ describe('Database', function () {
     });
 });
 describe('WorkManager', function () {
-    const WorkManager = require("../business/WorkManager")
-    const TASK_PRIORITY = require("../models/Agent").TASK_PRIORITY
 
-    let createdAgent = { firstName: "Alberto" }
 
-    // describe('Create Agent', function () {
-    //     it('Should create an Agent', async function () {
-    //         const createdAgentId = await WorkManager.createAgent(createdAgent)
-    //         createdAgent.id = createdAgentId
-    //         return createdAgent.id
-
-    //     });
-    //     it('Should create an Agent with Skills', async function () {
-    //         let agentWithSkills = {
-    //             firstName: "El bueno",
-    //             skills: ["test", "php", "newone", "skill2", "skill1", "my new skill"],
-    //         }
-
-    //         const createdAgentId = await WorkManager.createAgentWithSkill(agentWithSkills)
-    //         createdAgent.id = createdAgentId
-    //         return createdAgent.id
-
-    //     });
-    //     it('Should create another Agent with Skills', async function () {
-    //         let agentWithSkills = {
-    //             firstName: "juan",
-    //             lastName: "Castro",
-    //             skills: ["javascript", "drupal", "docker", "php"],
-    //         }
-
-    //         const createdAgentId = await WorkManager.createAgentWithSkill(agentWithSkills)
-    //         createdAgent.id = createdAgentId
-    //         return createdAgent.id
-
-    //     });
-    // });
-
-    // describe('Get Agent', function () {
-    //     it(`Should find an Agent with the name ${createdAgent.firstName}`, async function () {
-    //         const agent = await WorkManager.getAgent({ firstName: createdAgent.firstName })
-    //         return assert(agent.id)
-    //         //    return createdAgent.id
-
-    //     });
-    // });
-
-    // describe('Update Agent', function () {
-    //     it('Should update an Agent', async function () {
-    //         await WorkManager.updateAgent({ lastName: "Castro" }, { firstName: "Alberto" })
-    //         const agent = await WorkManager.getAgent({ firstName: "Alberto", lastName: "Castro" })
-    //         return assert(agent.id)
-    //     });
-    // });
-    // describe('Delete Agent', function () {
-    //     it('Should delete agent Alberto', async function () {
-    //         await WorkManager.deleteAgent({ firstName: "Alberto" })
-    //         const agent = await WorkManager.getAgent({ firstName: "Alberto" })
-
-    //         return assert(!agent)
-    //     });
-    // });
 describe("Tasks", function () {
     let createdTask
     const taskName = "Deploy to production"
-    const Task = require("../models/Agent").Task
-    const TASK_PRIORITY = require("../models/Agent").TASK_PRIORITY
+    const Task = require("../models/").Task
+    const TASK_PRIORITY = require("../models/").TASK_PRIORITY
 
     const WorkManager = require("../business/WorkManager")
 
     this.beforeEach(async function(){
-        const {sequelize} = require("../models/Agent")
+        const {sequelize} = require("../models/")
         await WorkManager.cleanDB()
     })
 
     
     it(`Should create 2 users and return the first one because has all the skills`, async function () {
 
-        const sequelize = require("../models/Agent").sequelize
-        const { Agent, Task, promiseSequelize } = require("../models/Agent")
-
-       
+        const sequelize = require("../models/").sequelize
+        const { Agent, Task, promiseSequelize } = require("../models/")       
 
         let agent1 = {
             firstName: "Good Match",
@@ -106,6 +45,7 @@ describe("Tasks", function () {
             firstName: "bad Match",
             skills: ["ruby", "rails"],
         }
+    
         const agent1Id = (await WorkManager.createAgentWithSkill(agent1)).id
         const agent2Id = (await WorkManager.createAgentWithSkill(agent2)).id
 
@@ -124,7 +64,7 @@ describe("Tasks", function () {
     it(`Should not select the agent because is working in something else`, async function () {
 
         const sequelize = require("../models/Agent").sequelize
-        const { Agent, Task, promiseSequelize } = require("../models/Agent")
+        const { Agent, Task, promiseSequelize } = require("../models/")
 
 
 
@@ -156,8 +96,8 @@ describe("Tasks", function () {
     })
     it(`Should prefer agent not assigned`, async function () {
 
-        const sequelize = require("../models/Agent").sequelize
-        const { Agent, Task, promiseSequelize } = require("../models/Agent")
+        const sequelize = require("../models/").sequelize
+        const { Agent, Task, promiseSequelize } = require("../models/")
 
         await promiseSequelize
 
@@ -192,10 +132,9 @@ describe("Tasks", function () {
     })
     it(`If all are in low priority, should choose the one that took the task most recently`, async function () {
 
-        const sequelize = require("../models/Agent").sequelize
-        const { Agent, Task, promiseSequelize } = require("../models/Agent")
+        const sequelize = require("../models/").sequelize
+        const { Agent, Task, promiseSequelize } = require("../models/")
 
-        await promiseSequelize
 
         const task1Id = (await WorkManager.createTask({
             summary: "First Task",

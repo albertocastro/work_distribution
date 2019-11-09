@@ -25,4 +25,19 @@ services:
       ports: 
         - 3010:3010
       command: ./initserver.sh
+
+  # nodedev:
+  #     image: 'node'
+  #     environment:
+  #       - PORT=3010
+  #     stdin_open: true
+  #     tty: true
+  #     restart: always
+  #     depends_on:
+  #       - mysql
+  #     ports: 
+  #       - 3011:3010
+  #     command: bash
+  #     volumes:
+  #       - ./:/home/app/
        
